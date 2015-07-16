@@ -1,0 +1,29 @@
+{
+  "name": "twitter-v2",
+  "version": "1.0.0",
+  "description": "Create a mock version of twitter using gulp build process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^10.2.3",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-serve": "^1.0.0",
+    "gulp-util": "^3.0.5",
+    "gulp-watch": "^4.2.4",
+    "hbsfy": "^2.2.1",
+    "json-server": "^0.7.12",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "private": true,
+  "dependencies": {
+    "handlebars": "^3.0.3",
+    "jquery": "^2.1.4",
+    "lodash": "^3.9.3"
+  }
+}

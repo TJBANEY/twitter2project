@@ -1,0 +1,164 @@
+/****************************************
+  Reset
+*****************************************/
+
+html {
+	color: #777;
+	font-family: 'Open Sans', Arial;
+}
+* {
+	box-sizing: border-box;
+	color: inherit;
+	font-family: inherit;
+	font-size: inherit;
+}
+html, body { height: 100%; padding: 0; margin: 0; }
+body { min-height: 100%; }
+img { border: 0; }
+a:focus, a:active, button:focus {
+	outline: 0;
+}
+
+
+/****************************************
+  Defaults
+*****************************************/
+
+a {
+	color: #2E9AC2;
+	text-decoration: none;
+}
+
+button {
+	background-color: #2E9AC2;
+	border-radius: 5px;
+	border: none;
+	color: #FFF;
+	padding: 5px 15px;
+}
+
+
+/****************************************
+  Compose
+*****************************************/
+
+.compose > div {
+	margin-top: 10px;
+	text-align: right;
+	display: none;
+}
+
+.compose textarea {
+	border-radius: 3px;
+	background-color: #fff;
+	border: 1px solid #C0E1ED;
+	display: block;
+	width: 100%;
+	padding: 4px;
+	resize: none;
+	height: 1.8em;
+}
+
+.compose textarea:focus {
+	outline: none;
+}
+
+/**
+ * Active State
+ */
+.compose.expand textarea {
+	height: 5em;
+}
+
+.compose.expand > div {
+	display: block;
+}
+
+
+/****************************************
+  Tweet
+*****************************************/
+
+.tweet {
+	overflow: hidden;
+}
+
+.tweet > img {
+	display: block;
+	float: left;
+	width: 60px;
+	height: 60px;
+	background-color: #eee;
+	border-radius: 4px;
+}
+
+.tweet .body {
+	margin-left: 60px;
+	padding-left: 10px;
+}
+
+.tweet .title {
+	font-weight: 700;
+	color: #333;
+}
+
+.tweet .message {
+	margin-top: 10px;
+}
+
+
+/****************************************
+  Structure
+*****************************************/
+
+body {
+	background: rgb(192, 222, 237) url('../images/bg.png') repeat-x;
+}
+
+section#main {
+	width: 600px;
+	margin: 0 auto;
+}
+
+header {
+	margin-top: 20px;
+	background-color: #E5F2F7;
+	border: 1px solid #C0E1ED;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+#tweets {
+	margin-top: 10px;
+	background-color: #fff;
+	border: 1px solid #C0E1ED;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+/**
+ * Thread / Replies
+ */
+
+.thread {
+	border-bottom: 1px solid #E1E8ED;
+}
+
+.thread .tweet {
+	margin: 10px;
+}
+
+.replies {
+	padding: 10px;
+	background-color: #E5F2F7;
+	display: none;
+}
+
+.replies .compose {
+	border-bottom: 1px solid #C4D8E6;
+	padding-bottom: 10px;
+}
+
+.thread.expand .replies {
+	display: block;
+}
