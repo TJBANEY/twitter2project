@@ -2,28 +2,50 @@
 var templates = require('./template')
 
 
-$(function () {  // Start of EVERYTHING
+$(function () {  // DOM READY FUNCTION
 
   var currentUser = {
-    handle: '@bradwestfall',
-    img: 'brad.png',
-    id: 1
+    handle: '@timbaney',
+    img: '../images/world.png',
+    id: 4
   };
 
-  function renderTweet(currentUser, message) {  // Function 1
-    var currentUserData = {
-      image: "../images/" + currentUser.img,
-      handle: currentUser.handle,
-      id: currentUser.id,            // first tweet
-      message: message
-    }
-
-    return templates.tweet(currentUserData);
+  function getTweets() {
+    return $.get(baseURL + "tweets/")
   }
 
-  var usersPath = "http://localhost:3000/users/"
-  var repliesPath = "http://localhost:3000/replies/"
-  var tweetsPath = "http://localhost:3000/tweets/"
+  function getReplies() {
+    return $.get(baseURL + "replies/")
+  }
+
+  function tweetObject(id, image, handle, message) {
+    return   { id: id, image: image, handle: handle, message: message }
+  }
+
+  function renderThread(tweet, compose) {
+    return { tweet: tweet, compose: compose }
+  }
+
+  function getTweetUsers(id) {
+    return $.get(baseURL + "users/" + id)
+  }
+
+  function getReplyUsers(id) {
+    return $.get(baseURL + "users/" + id)
+  }
+
+  function repliesData(userId, tweetId, message) {
+    return {
+      userId: userId,
+      tweetId: tweetId,
+      message: message
+    }
+  }
+
+  var baseURL = "http://localhost:3000/";
+  var getTweets = getTweets();
+  var getReplies = getReplies();
+  var compose = templates.compose;
 
   $('#main').on('click', '.compose', function(){
     $(this).addClass('expand')   // State Management Function 1
@@ -32,87 +54,66 @@ $(function () {  // Start of EVERYTHING
 
   $('#tweets').on('click', '.tweet', function (){
    $(this).parent().toggleClass('expand')   // State Management Function 2
-   $(this).attr('maxlength', '140')
+   var repliesExist = $(this).closest('#tweets').find('.replies .tweet').length
+   if (repliesExist == 0) {  //if #tweets has no replies, get replies
+     getReplies.done(function (replies) { 
+       replies.forEach(function (replies){ 
+        getReplyUsers(replies.userId).done(function (users){  
+          var reply = templates.tweet(tweetObject(replies.tweetId, "../images/" + users.img, users.handle, replies.message))
+          $('#' + replies.tweetId).siblings(".replies").append(reply)
+          })  
+        }) 
+      })   
+    }
   })
 
+  getTweets.done(function (tweets) {     //get tweets, and tweets users based on their userId
+    tweets.forEach(function (tweets){ 
+      getTweetUsers(tweets.userId).done(function (users){  
+        var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))
+        var thread = templates.thread(renderThread(tweet, compose))
+        $('#tweets').append(thread)
+        })  
+      }) 
+    })  
 
-  $.get(tweetsPath)  // Start of Tweet Render Function
-    .done(function (tweets) { 
-      tweets.forEach(function (tweets){ 
-        $.get(usersPath + tweets.userId)
-          .done(function (users){  
-             var tweetData = {
-              id: tweets.id,
-              image: "../images/" + users.img,
-              handle: users.handle,
-              message: tweets.message
-             }
-             var tweet = (templates.tweet(tweetData))  
-             var compose = templates.compose;
-             var threadData = {
-              tweet: tweet,
-              compose: compose
-             }
-             var thread = (templates.thread(threadData))
-             $('#tweets').append(thread)
-           })  
-         }) 
-       })    // End of Tweet Render Function
-
-
-
-
-  $.get(repliesPath)  // Start of Reply Render Function
-    .done(function (replies) { 
-     replies.forEach(function (replies){ 
-      $.get(usersPath + replies.userId)
-        .done(function (users){  
-           var replyData = {
-            id: replies.tweetId,
-            image: "../images/" + users.img,
-            handle: users.handle,
-            message: replies.message
-           }
-           var reply = (templates.tweet(replyData))  
-           $('#' + replies.tweetId).siblings(".replies").append(reply)
-         })  
-       }) 
-     })    // End of Reply Render Function
-
-
-  $('#main').on('click', 'button', function (event){   // Start of MAIN FUNCTION
+  $('#main').on('click', 'button', function (event){   //Main function for when text is entered in compose area, and button is clicked
   var location = $(this).parents('.compose')
   var message = location.find('textarea').val()
-  var data2 = templates.thread({
-      tweet: renderTweet(currentUser, message),
-      compose: templates.compose
-    })
-  var reply = renderTweet(currentUser, message)
   var replyTweet = $(this).parents('.replies')
+  var thisId = $(this).parents('.thread').find('.tweet').attr('id')
 
-  if(!!replyTweet.length) {
-    replyTweet.append(reply)
+  if(!!replyTweet.length) {  //if this button parents don't have a replies section post and append to #tweets, otherwise append to that buttons thread
+    
+    $.post(baseURL + "replies/", repliesData(currentUser.id, thisId, message))
+      .done(function (currenUser, data){
+      var swaka = templates.tweet(tweetObject(currentUser.id, currentUser.img, currentUser.handle, message))
+      $(replyTweet).append(swaka)
+    }).fail(function(){
+      console.log("This doesn't work")
+    })
+
   } else {
-    // $("#tweets").append(data2)
-    console.log("waka waka")
+    
+    $.post(baseURL + "tweets/", {
+      userId: 4,
+      message: message
+    }).done(function (currenUser, data){
+      var waka = templates.tweet(tweetObject(currentUser.id, currentUser.img, currentUser.handle, message))
+      var wakaThread = templates.thread(renderThread(waka, compose))
+      $('#tweets').append(wakaThread)
+    }).fail(function(){
+      console.log('ERROR')
+    })
   }
-
 
   location.find('textarea').val('')
   location.find('.count').val(140)
   $(this).parents('.compose').removeClass('expand')
 
   return false;
-})  // End of MAIN FUNCTION
+}) 
 
-  $('#main').on('click', 'button', function (event){  // Start of PUSH TESTING
-    $.post(usersPath, {
-    handle: '@bradwestfall',
-    img: 'brad.png',
-    id: 1,
-    }).done(console.log("this works"))
 
-    return false;
-  }) // End of PUSH TESTING
 
-});  // End of EVERYTHING
+});  // End of DOM READY FUNCTION

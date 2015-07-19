@@ -18,7 +18,7 @@ bundler.transform(hbsfy);
 bundler.on('log', gutil.log); 
 
 gulp.task('watch', function() {
-  gulp.watch(['index.js'], ['build'])
+  gulp.watch(['index.js'], ['default'])
 })
 
 gulp.task('clean', function () {
