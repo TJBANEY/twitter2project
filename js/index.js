@@ -66,7 +66,7 @@ $(function () {  // DOM READY FUNCTION
      getReplies.done(function (replies) { 
        replies.forEach(function (replies){ 
         getReplyUsers(replies.userId).done(function (users){  
-          var reply = templates.tweet(tweetObject(replies.tweetId, "../images/" + users.img, users.handle, replies.message))
+          var reply = templates.tweet(tweetObject(replies.tweetId, users.img, users.handle, replies.message))
           $('#' + replies.tweetId).siblings(".replies").append(reply)
           })  
         }) 
