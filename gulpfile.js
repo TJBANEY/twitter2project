@@ -2,8 +2,7 @@
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var clean = require('gulp-clean');
-var jquery = require('jquery');
+var clean = require('rimraf')
 
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
@@ -21,9 +20,8 @@ gulp.task('watch', function() {
   gulp.watch(['index.js'], ['default'])
 })
 
-gulp.task('clean', function () {
-   return gulp.src('./js/bundle.js')
-       .pipe(clean({force: true}))
+gulp.task('clean', function (cb) {
+   clean('./js/bundle.js', cb)
        // .pipe(gulp.dest('deletedgul'));
 });
 

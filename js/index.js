@@ -1,14 +1,16 @@
 'use strict';
 var templates = require('./template')
-
-
-$(function () {  // DOM READY FUNCTION
+var $ = require('jquery')
 
   var currentUser = {
     handle: '@timbaney',
     img: '../images/world.png',
     id: 4
   };
+
+$(function () {  // DOM READY FUNCTION
+
+  var baseURL = "http://localhost:3000/";
 
   function getTweets() {
     return $.get(baseURL + "tweets/")
@@ -19,11 +21,17 @@ $(function () {  // DOM READY FUNCTION
   }
 
   function tweetObject(id, image, handle, message) {
-    return   { id: id, image: image, handle: handle, message: message }
+    return   { id: id,
+               image: image,
+               handle: handle, 
+               message: message
+             }
   }
 
   function renderThread(tweet, compose) {
-    return { tweet: tweet, compose: compose }
+    return { tweet: tweet, 
+             compose: compose
+           }
   }
 
   function getTweetUsers(id) {
@@ -42,7 +50,6 @@ $(function () {  // DOM READY FUNCTION
     }
   }
 
-  var baseURL = "http://localhost:3000/";
   var getTweets = getTweets();
   var getReplies = getReplies();
   var compose = templates.compose;
@@ -67,12 +74,14 @@ $(function () {  // DOM READY FUNCTION
     }
   })
 
-  getTweets.done(function (tweets) {     //get tweets, and tweets users based on their userId
+  getTweets
+   .done(function (tweets) {     //get tweets, and tweets users based on their userId
     tweets.forEach(function (tweets){ 
-      getTweetUsers(tweets.userId).done(function (users){  
-        var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))
-        var thread = templates.thread(renderThread(tweet, compose))
-        $('#tweets').append(thread)
+      getTweetUsers(tweets.userId)
+       .done(function (users){  
+         var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))
+         var thread = templates.thread(renderThread(tweet, compose))
+         $('#tweets').append(thread)
         })  
       }) 
     })  

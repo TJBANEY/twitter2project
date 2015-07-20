@@ -1,0 +1,130 @@
+[1mdiff --git a/gulpfile.js b/gulpfile.js[m
+[1mindex 49dde42..92f3f72 100644[m
+[1m--- a/gulpfile.js[m
+[1m+++ b/gulpfile.js[m
+[36m@@ -2,8 +2,7 @@[m
+ [m
+ var gulp = require('gulp');[m
+ var gutil = require('gulp-util');[m
+[31m-var clean = require('gulp-clean');[m
+[31m-var jquery = require('jquery');[m
+[32m+[m[32mvar clean = require('rimraf')[m
+ [m
+ var source = require('vinyl-source-stream');[m
+ var browserify = require('browserify');[m
+[36m@@ -21,9 +20,8 @@[m [mgulp.task('watch', function() {[m
+   gulp.watch(['index.js'], ['default'])[m
+ })[m
+ [m
+[31m-gulp.task('clean', function () {[m
+[31m-   return gulp.src('./js/bundle.js')[m
+[31m-       .pipe(clean({force: true}))[m
+[32m+[m[32mgulp.task('clean', function (cb) {[m
+[32m+[m[32m   clean('./js/bundle.js', cb)[m
+        // .pipe(gulp.dest('deletedgul'));[m
+ });[m
+ [m
+[1mdiff --git a/index.html b/index.html[m
+[1mindex 4e1140d..9511a23 100644[m
+[1m--- a/index.html[m
+[1m+++ b/index.html[m
+[36m@@ -1,8 +1,6 @@[m
+ <!DOCTYPE html>[m
+ <html lang="en">[m
+ <head>[m
+[31m-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>[m
+[31m-  <link rel="stylesheet" href="css/styles.css">[m
+   <link rel="stylesheet" href="css/styles.css">[m
+ </head>[m
+ <body>[m
+[1mdiff --git a/js/index.js b/js/index.js[m
+[1mindex c98001e..10d172f 100644[m
+[1m--- a/js/index.js[m
+[1m+++ b/js/index.js[m
+[36m@@ -1,8 +1,6 @@[m
+ 'use strict';[m
+ var templates = require('./template')[m
+[31m-[m
+[31m-[m
+[31m-$(function () {  // DOM READY FUNCTION[m
+[32m+[m[32mvar $ = require('jquery')[m
+ [m
+   var currentUser = {[m
+     handle: '@timbaney',[m
+[36m@@ -10,6 +8,10 @@[m [m$(function () {  // DOM READY FUNCTION[m
+     id: 4[m
+   };[m
+ [m
+[32m+[m[32m$(function () {  // DOM READY FUNCTION[m
+[32m+[m
+[32m+[m[32m  var baseURL = "http://localhost:3000/";[m
+[32m+[m
+   function getTweets() {[m
+     return $.get(baseURL + "tweets/")[m
+   }[m
+[36m@@ -19,11 +21,17 @@[m [m$(function () {  // DOM READY FUNCTION[m
+   }[m
+ [m
+   function tweetObject(id, image, handle, message) {[m
+[31m-    return   { id: id, image: image, handle: handle, message: message }[m
+[32m+[m[32m    return   { id: id,[m
+[32m+[m[32m               image: image,[m
+[32m+[m[32m               handle: handle,[m[41m [m
+[32m+[m[32m               message: message[m
+[32m+[m[32m             }[m
+   }[m
+ [m
+   function renderThread(tweet, compose) {[m
+[31m-    return { tweet: tweet, compose: compose }[m
+[32m+[m[32m    return { tweet: tweet,[m[41m [m
+[32m+[m[32m             compose: compose[m
+[32m+[m[32m           }[m
+   }[m
+ [m
+   function getTweetUsers(id) {[m
+[36m@@ -42,7 +50,6 @@[m [m$(function () {  // DOM READY FUNCTION[m
+     }[m
+   }[m
+ [m
+[31m-  var baseURL = "http://localhost:3000/";[m
+   var getTweets = getTweets();[m
+   var getReplies = getReplies();[m
+   var compose = templates.compose;[m
+[36m@@ -67,12 +74,14 @@[m [m$(function () {  // DOM READY FUNCTION[m
+     }[m
+   })[m
+ [m
+[31m-  getTweets.done(function (tweets) {     //get tweets, and tweets users based on their userId[m
+[32m+[m[32m  getTweets[m
+[32m+[m[32m   .done(function (tweets) {     //get tweets, and tweets users based on their userId[m
+     tweets.forEach(function (tweets){ [m
+[31m-      getTweetUsers(tweets.userId).done(function (users){  [m
+[31m-        var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))[m
+[31m-        var thread = templates.thread(renderThread(tweet, compose))[m
+[31m-        $('#tweets').append(thread)[m
+[32m+[m[32m      getTweetUsers(tweets.userId)[m
+[32m+[m[32m       .done(function (users){[m[41m  [m
+[32m+[m[32m         var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))[m
+[32m+[m[32m         var thread = templates.thread(renderThread(tweet, compose))[m
+[32m+[m[32m         $('#tweets').append(thread)[m
+         })  [m
+       }) [m
+     })  [m
+[1mdiff --git a/package.json b/package.json[m
+[1mindex d7643f0..bc141e1 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -13,11 +13,12 @@[m
+     "del": "^1.2.0",[m
+     "gulp": "^3.9.0",[m
+     "gulp-clean": "^0.3.1",[m
+[32m+[m[32m    "gulp-rimraf": "^0.1.1",[m
+     "gulp-serve": "^1.0.0",[m
+     "gulp-util": "^3.0.5",[m
+[31m-    "gulp-watch": "^4.2.4",[m
+     "hbsfy": "^2.2.1",[m
+     "json-server": "^0.7.12",[m
+[32m+[m[32m    "rimraf": "^2.4.2",[m
+     "vinyl-source-stream": "^1.1.0"[m
+   },[m
+   "private": true,[m
