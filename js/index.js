@@ -54,10 +54,10 @@ $(function () {  // DOM READY FUNCTION
   var getReplies = getReplies();
   var compose = templates.compose;
 
-  // $('#main').on('click', '.compose', function(){
-  //   $(this).addClass('expand')   // State Management Function 1
-  //   $(this).attr('maxlength', '140')
-  // })
+  $('#main').on('click', '.compose', function(){
+    $(this).addClass('expand')   // State Management Function 1
+    $(this).attr('maxlength', '140')
+  })
 
   $('#tweets').on('click', '.tweet', function (){
    $(this).parent().toggleClass('expand')   // State Management Function 2
