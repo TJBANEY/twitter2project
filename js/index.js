@@ -54,10 +54,10 @@ $(function () {  // DOM READY FUNCTION
   var getReplies = getReplies();
   var compose = templates.compose;
 
-  $('#main').on('click', '.compose', function(){
-    $(this).addClass('expand')   // State Management Function 1
-    $(this).attr('maxlength', '140')
-  })
+  // $('#main').on('click', '.compose', function(){
+  //   $(this).addClass('expand')   // State Management Function 1
+  //   $(this).attr('maxlength', '140')
+  // })
 
   $('#tweets').on('click', '.tweet', function (){
    $(this).parent().toggleClass('expand')   // State Management Function 2
@@ -75,16 +75,16 @@ $(function () {  // DOM READY FUNCTION
   })
 
   getTweets
-   .done(function (tweets) {     //get tweets, and tweets users based on their userId
-    tweets.forEach(function (tweets){ 
-      getTweetUsers(tweets.userId)
-       .done(function (users){  
-         var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))
-         var thread = templates.thread(renderThread(tweet, compose))
-         $('#tweets').append(thread)
-        })  
-      }) 
-    })  
+    .done(function (tweets) {     //get tweets, and tweets users based on their userId
+      tweets.forEach(function (tweets){ 
+        getTweetUsers(tweets.userId)
+          .done(function (users){  
+          var tweet = templates.tweet(tweetObject(tweets.id, users.img, users.handle, tweets.message))
+          var thread = templates.thread(renderThread(tweet, compose))
+          $('#tweets').append(thread)
+          })  
+        }) 
+      })  
 
   $('#main').on('click', 'button', function (event){   //Main function for when text is entered in compose area, and button is clicked
   var location = $(this).parents('.compose')
