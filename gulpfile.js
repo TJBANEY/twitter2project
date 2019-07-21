@@ -1,7 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var clean = require('rimraf')
 
 var source = require('vinyl-source-stream');
@@ -14,7 +13,6 @@ var bundler = browserify({
 });
 
 bundler.transform(hbsfy);
-bundler.on('log', gutil.log); 
 
 gulp.task('watch', function() {
   gulp.watch(['index.js'], ['default'])
@@ -27,12 +25,9 @@ gulp.task('clean', function (cb) {
 
 gulp.task('build', ['clean'], function () {
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('bundle.js'))
     .pipe(gulp.dest('js'));
 });
-
-
 
 // API Server
 var jsonServer = require('json-server');
